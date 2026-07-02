@@ -1,9 +1,9 @@
 import {configureStore} from "@reduxjs/toolkit";
-import { contactReducer } from "./contactSlice";
+import { dishesReducer } from "./DishesSlice";
 
 export const store = configureStore({
   reducer: {
-    contacts: contactReducer,
+    dishes: dishesReducer,
   }
 });
 
