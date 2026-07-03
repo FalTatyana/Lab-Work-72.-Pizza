@@ -12,7 +12,6 @@ export interface Dish {
 interface DishesState {
   dishes: Dish [],
   loading: boolean;
-
 }
 
 const initialState: DishesState = {
@@ -55,6 +54,17 @@ export const addDish = createAsyncThunk(
   }
 );
 
+export const editDish = createAsyncThunk(
+  "dish/editDish",
+  async (dish: Dish) => {
+    const { id, ...dishData } = dish;
+
+    await axiosApi.put(`/admin/dishes/${id}.json`, dishData);
+
+    return dish;
+  }
+);
+
 const dishesSlice = createSlice({
   name: "dishes",
   initialState,
@@ -90,6 +100,22 @@ const dishesSlice = createSlice({
       toast.success("Dish added");
     });
     builder.addCase(addDish.rejected, (state) => {
+      state.loading = false;
+      toast.error("Success Denied");
+    });
+    builder.addCase(editDish.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(editDish.fulfilled, (state, action) => {
+      state.loading = false;
+
+      state.dishes = state.dishes.map((dish) =>
+        dish.id === action.payload.id ? action.payload : dish
+      );
+
+      toast.success("Dish updated");
+    });
+    builder.addCase(editDish.rejected, (state) => {
       state.loading = false;
       toast.error("Success Denied");
     });

@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom"
-import DishItem from "../../components/DishItem/DishItem"
+import DishItem from "../../../components/DishItem/DishItem"
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../app/store";
+import type { AppDispatch, RootState } from "../../../app/store";
 import { useEffect } from "react";
-import { deleteDishes, fetchDishes } from "../../app/DishesSlice";
-import Spinner from "../../components/Spinner/Spinner";
+import { deleteDishes, fetchDishes } from "../../../app/DishesSlice";
+import Spinner from "../../../components/Spinner/Spinner";
 
 const DishesList = () => {
 
@@ -39,8 +39,9 @@ const DishesList = () => {
                         title={dish.title}
                         price={dish.price}
                         url={dish.url}
-                        handleDelete={() => handleDelete(dish.id)}
-                    />
+                        handleDelete={() => handleDelete(dish.id)} 
+                        id={dish.id}                    
+                        />
                 ))}
             </div>
         </>

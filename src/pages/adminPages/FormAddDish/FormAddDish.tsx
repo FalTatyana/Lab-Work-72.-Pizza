@@ -1,17 +1,29 @@
-import { useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
-import { addDish, fetchDishes, type Dish } from "../../app/DishesSlice";
-import type { AppDispatch } from "../../app/store";
+import { addDish, fetchDishes, type Dish, editDish } from "../../../app/DishesSlice";
+import type { AppDispatch } from "../../../app/store";
 
-const FormAddDish = () => {
+interface Props {
+    isEdit?: boolean
+    dish?: Dish
+};
 
-    const [form, setForm] = useState<Omit<Dish, "id">>({
+const FormAddDish = ({ isEdit = false, dish }: Props) => {
+
+    const [form, setForm] = useState<Dish>({
+        id: '',
         title: '',
         price: '',
         url: '',
     });
+
+    useEffect(() => {
+        if (dish) {
+            setForm(dish);
+        }
+    }, [dish]);
 
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +36,13 @@ const FormAddDish = () => {
 
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (isEdit) {
+            await dispatch(editDish(form))
+            await dispatch(fetchDishes());
+            navigate("/admin/dishes");
+            return;
+        };
         
         if (!form.url.trim() || !form.title.trim() || !form.price.trim()) {
             toast.error('Enter all data')
@@ -43,7 +62,7 @@ const FormAddDish = () => {
 
     return (
         <>
-            <h5 className="mb-3">Add new dish</h5>
+            <h5 className="mb-3">{isEdit ? "Edit dish" : "Add new dish"}</h5>
             <form onSubmit={handleSubmit}>
                 <div className="form-group mb-3">
                     <label htmlFor="exampleInputEmail1">Title</label>
@@ -81,7 +100,7 @@ const FormAddDish = () => {
                         value={form.url}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">Add</button>
+                <button type="submit" className="btn btn-primary mt-3">{isEdit ? "Edit" : "Add"}</button>
             </form>
         </>
     )
