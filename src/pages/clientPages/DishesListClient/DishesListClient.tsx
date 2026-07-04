@@ -39,10 +39,6 @@ const DishesListClient = () => {
     setIsOpen(false);
   };
 
-  const handleOrder = () => {
-    setIsOpen(false);
-  };
-
   return (
     <>
       <h5>Client menu</h5>
@@ -80,7 +76,7 @@ const DishesListClient = () => {
           </button>
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={closeModal} handleOrder={handleOrder} />
+      <Modal isOpen={isOpen} onClose={closeModal} />
     </>
   );
 };

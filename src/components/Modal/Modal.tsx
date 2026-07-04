@@ -1,22 +1,31 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../../app/store";
+import type { AppDispatch, RootState } from "../../app/store";
+import { postOrder, removeFromCart } from "../../app/cartSlice";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  handleOrder: () => void;
 }
 
-const Modal = ({ isOpen, onClose, handleOrder }: Props) => {
+const Modal = ({ isOpen, onClose }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
   const items = useSelector((state: RootState) => state.cart.items);
 
   const total = items.reduce(
     (acc, item) => acc + Number(item.price) * item.amount,
     0
   );
+
+  const handleDelete = (id: string) => {
+    dispatch(removeFromCart(id));
+  };
+
+  const handleOrder = async () => {
+    await dispatch(postOrder(items));
+    onClose();
+  };
 
   return (
     <>
@@ -53,15 +62,14 @@ const Modal = ({ isOpen, onClose, handleOrder }: Props) => {
                           <button
                             type="button"
                             className="btn btn-outline-danger ms-3"
+                            onClick={() => handleDelete(item.id)}
                           >
                             <i className="bi bi-trash3"></i>
                           </button>
                         </div>
                       </div>
                     ))}
-
                     <hr />
-
                     <h5>Total: {total} KGS</h5>
                   </>
                 )}
